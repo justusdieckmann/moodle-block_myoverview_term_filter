@@ -40,7 +40,8 @@ function(
     var SELECTORS = {
         FILTERS: '[data-region="filter"]',
         FILTER_OPTION: '[data-filter]',
-        DISPLAY_OPTION: '[data-display-option]'
+        DISPLAY_OPTION: '[data-display-option]',
+        TERM_OPTION: '[data-term-option]'
     };
 
     /**
@@ -69,6 +70,8 @@ function(
         });
     };
 
+    var lastFilter;
+
     /**
      * Event listener for the Display filter (cards, list).
      *
@@ -93,10 +96,8 @@ function(
                 var filter = option.attr('data-filter');
                 var pref = option.attr('data-pref');
 
-                if(option.is('#semester-dropdown-option')) {
-                    console.log("Juhu!");
-                    return;
-                }
+                console.log(lastFilter);
+                lastFilter = pref;
 
                 root.find(Selectors.courseView.region).attr('data-' + filter, option.attr('data-value'));
                 updatePreferences(filter, pref);
@@ -104,6 +105,27 @@ function(
                 // Reset the views.
                 View.init(root);
 
+                data.originalEvent.preventDefault();
+            }
+        );
+
+        CustomEvents.define(Selector, [CustomEvents.events.activate]);
+        Selector.on(
+            CustomEvents.events.activate,
+            SELECTORS.TERM_OPTION,
+            function(e, data) {
+                var option = $(e.target);
+
+                if (option.hasClass('active')) {
+                    return;
+                }
+
+                var filter = option.attr('data-display-option');
+                var pref = option.attr('data-pref');
+
+                root.find(Selectors.courseView.region).attr('data-display', option.attr('data-value'));
+                updatePreferences(filter, pref);
+                View.reset(root);
                 data.originalEvent.preventDefault();
             }
         );

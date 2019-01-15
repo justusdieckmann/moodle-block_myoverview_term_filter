@@ -110,7 +110,9 @@ function(
      * @return {promise} Resolved with an array of courses.
      */
     var getMyCourses = function(filters, limit) {
+        if(filters.grouping === "term") {
 
+        }
         return Repository.getEnrolledCoursesByTimeline({
             offset: courseOffset,
             limit: limit,
