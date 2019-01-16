@@ -48,6 +48,31 @@ define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
     };
 
     /**
+     * Retrieve a lost of enrolled courses in a specific term.
+     *
+     * Valid args are:
+     * int limit
+     * int offset
+     * string term
+     * int sort
+     *
+     * @method getEnrolledCoursesByTerm
+     * @param {object} args The request arguments
+     * @return {promise} Resolved with an array of courses
+     */
+    var getEnrolledCoursesByTerm = function(args) {
+
+        var request = {
+            methodname: 'local_block_myoverview_term_filter_get_enrolled_courses_by_term',
+            args: args
+        };
+
+        var promise = Ajax.call([request])[0];
+
+        return promise;
+    };
+
+    /**
      * Set the favourite state on a list of courses.
      *
      * Valid args are:
@@ -95,6 +120,7 @@ define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
 
     return {
         getEnrolledCoursesByTimeline: getEnrolledCoursesByTimeline,
+        getEnrolledCoursesByTerm: getEnrolledCoursesByTerm,
         setFavouriteCourses: setFavouriteCourses,
         updateUserPreferences: updateUserPreferences
     };

@@ -49,12 +49,16 @@ class block_myoverview_term_filter extends block_base {
         if (isset($this->content)) {
             return $this->content;
         }
+
+        require_once(__DIR__ . '/locallib.php');
+
+        $terms = get_semester_by_user();
         $group = get_user_preferences('block_myoverview_term_filter_user_grouping_preference');
         $sort = get_user_preferences('block_myoverview_term_filter_user_sort_preference');
         $view = get_user_preferences('block_myoverview_term_filter_user_view_preference');
         $paging = get_user_preferences('block_myoverview_term_filter_user_paging_preference');
 
-        $renderable = new \block_myoverview_term_filter\output\main($group, $sort, $view, $paging);
+        $renderable = new \block_myoverview_term_filter\output\main($group, $sort, $view, $paging, $terms);
         $renderer = $this->page->get_renderer('block_myoverview_term_filter');
 
         $this->content = new stdClass();

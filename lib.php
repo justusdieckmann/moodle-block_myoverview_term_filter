@@ -33,6 +33,7 @@ define('BLOCK_myoverview_term_filter_GROUPING_FUTURE', 'future');
 define('BLOCK_myoverview_term_filter_GROUPING_PAST', 'past');
 define('BLOCK_myoverview_term_filter_GROUPING_FAVOURITES', 'favourites');
 define('BLOCK_myoverview_term_filter_GROUPING_HIDDEN', 'hidden');
+define('BLOCK_myoverview_term_filter_GROUPING_TERM', 'term');
 
 /**
  * Constants for the user preferences sorting options
@@ -71,7 +72,8 @@ function block_myoverview_term_filter_user_preferences() {
             BLOCK_myoverview_term_filter_GROUPING_FUTURE,
             BLOCK_myoverview_term_filter_GROUPING_PAST,
             BLOCK_myoverview_term_filter_GROUPING_FAVOURITES,
-            BLOCK_myoverview_term_filter_GROUPING_HIDDEN
+            BLOCK_myoverview_term_filter_GROUPING_HIDDEN,
+            BLOCK_myoverview_term_filter_GROUPING_TERM
         )
     );
     $preferences['block_myoverview_term_filter_user_sort_preference'] = array(

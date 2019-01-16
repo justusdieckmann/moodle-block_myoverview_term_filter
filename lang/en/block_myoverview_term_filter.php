@@ -35,6 +35,7 @@ $string['aria:displaydropdown'] = 'Display dropdown';
 $string['aria:favourites'] = 'Show starred courses';
 $string['aria:future'] = 'Show future courses';
 $string['aria:groupingdropdown'] = 'Grouping dropdown';
+$string['aria:termdropdown'] = 'Term dropdown';
 $string['aria:inprogress'] = 'Show in courses in progress';
 $string['aria:lastaccessed'] = 'Sort courses by last accessed date';
 $string['aria:list'] = 'Switch to list view';

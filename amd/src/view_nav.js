@@ -70,7 +70,6 @@ function(
         });
     };
 
-    var lastFilter;
 
     /**
      * Event listener for the Display filter (cards, list).
@@ -96,12 +95,10 @@ function(
                 var filter = option.attr('data-filter');
                 var pref = option.attr('data-pref');
 
-                console.log(lastFilter);
-                lastFilter = pref;
+                root.find('#termdropdown').attr('hidden', pref !== 'term');
 
                 root.find(Selectors.courseView.region).attr('data-' + filter, option.attr('data-value'));
                 updatePreferences(filter, pref);
-
                 // Reset the views.
                 View.init(root);
 
@@ -120,11 +117,15 @@ function(
                     return;
                 }
 
+
+
                 var filter = option.attr('data-display-option');
                 var pref = option.attr('data-pref');
 
-                root.find(Selectors.courseView.region).attr('data-display', option.attr('data-value'));
-                updatePreferences(filter, pref);
+                console.log(filter, pref);
+
+                root.find(Selectors.courseView.region).attr('data-term', option.attr('data-value'));
+                //updatePreferences(filter, pref);
                 View.reset(root);
                 data.originalEvent.preventDefault();
             }

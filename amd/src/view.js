@@ -90,7 +90,8 @@ function(
         return {
             display: courseRegion.attr('data-display'),
             grouping: courseRegion.attr('data-grouping'),
-            sort: courseRegion.attr('data-sort')
+            sort: courseRegion.attr('data-sort'),
+            term: courseRegion.attr('data-term')
         };
     };
 
@@ -110,15 +111,21 @@ function(
      * @return {promise} Resolved with an array of courses.
      */
     var getMyCourses = function(filters, limit) {
-        if(filters.grouping === "term") {
-
+        if (filters.grouping === "term") {
+            return Repository.getEnrolledCoursesByTerm({
+                offset: courseOffset,
+                limit: limit,
+                term: filters.term,
+                sort: filters.sort
+            });
+        } else {
+            return Repository.getEnrolledCoursesByTimeline({
+                offset: courseOffset,
+                limit: limit,
+                classification: filters.grouping,
+                sort: filters.sort
+            });
         }
-        return Repository.getEnrolledCoursesByTimeline({
-            offset: courseOffset,
-            limit: limit,
-            classification: filters.grouping,
-            sort: filters.sort
-        });
     };
 
     /**
