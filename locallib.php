@@ -13,7 +13,7 @@ function get_semester_by_user() {
     $TERM2START = "10-01";
 
     $otherCourses = false;
-    $courses = enrol_get_my_courses('id, shortname', 'fullname ASC');
+    $courses = enrol_get_my_courses('id, shortname', 'startdate DESC');
     $semester = [];
     foreach ($courses as $c) {
 
