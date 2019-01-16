@@ -9,7 +9,7 @@
  */
 require_once($CFG->libdir . "/externallib.php");
 
-class local_myoverview_term_filter_external extends external_api {
+class local_block_myoverview_term_filter_external extends external_api {
 
     /**
      * Returns description of method parameters
@@ -19,9 +19,9 @@ class local_myoverview_term_filter_external extends external_api {
     public static function get_enrolled_courses_by_term_parameters() {
         return new external_function_parameters(
                 array(
+                        'term' => new external_value(PARAM_TEXT, 'term to filter for', VALUE_DEFAULT, null),
                         'limit' => new external_value(PARAM_INT, 'Result set limit', VALUE_DEFAULT, 0),
                         'offset' => new external_value(PARAM_INT, 'Result set offset', VALUE_DEFAULT, 0),
-                        'term' => new external_value(PARAM_TEXT, 'term to filter for', VALUE_DEFAULT, null),
                         'sort' => new external_value(PARAM_TEXT, 'Sort string', VALUE_DEFAULT, null)
                 )
         );
@@ -56,8 +56,9 @@ class local_myoverview_term_filter_external extends external_api {
     ) {
         global $CFG, $PAGE, $USER;
         require_once($CFG->dirroot . '/course/lib.php');
+        require_once($CFG->dirroot . '/blocks/myoverview_term_filter/locallib.php');
 
-        $params = self::validate_parameters(self::get_enrolled_courses_by_timeline_classification_parameters(),
+        $params = self::validate_parameters(self::get_enrolled_courses_by_term_parameters(),
                 array(
                         'term' => $term,
                         'limit' => $limit,
@@ -73,7 +74,7 @@ class local_myoverview_term_filter_external extends external_api {
 
         self::validate_context(context_user::instance($USER->id));
 
-        $requiredproperties = course_summary_exporter::define_properties();
+        $requiredproperties = core_course\external\course_summary_exporter::define_properties();
         $fields = join(',', array_keys($requiredproperties));
         $hiddencourses = get_hidden_courses_on_timeline();
         $courses = [];
@@ -108,7 +109,7 @@ class local_myoverview_term_filter_external extends external_api {
             if (in_array($course->id, $favouritecourseids)) {
                 $isfavourite = true;
             }
-            $exporter = new course_summary_exporter($course, ['context' => $context, 'isfavourite' => $isfavourite]);
+            $exporter = new core_course\external\course_summary_exporter($course, ['context' => $context, 'isfavourite' => $isfavourite]);
             return $exporter->export($renderer);
         }, $filteredcourses);
 
@@ -126,7 +127,7 @@ class local_myoverview_term_filter_external extends external_api {
     public static function get_enrolled_courses_by_term_returns() {
         return new external_single_structure(
                 array(
-                        'courses' => new external_multiple_structure(course_summary_exporter::get_read_structure(), 'Course'),
+                        'courses' => new external_multiple_structure(core_course\external\course_summary_exporter::get_read_structure(), 'Course'),
                         'nextoffset' => new external_value(PARAM_INT, 'Offset for the next request')
                 )
         );

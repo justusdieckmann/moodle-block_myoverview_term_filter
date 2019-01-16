@@ -17,10 +17,6 @@ function get_semester_by_user() {
     $semester = [];
     foreach ($courses as $c) {
 
-        // Collect information about my courses and populate filters with data about my courses.
-        // Term information.
-        $terminfo = new stdClass();
-
         // If course start date is undefined, set course term to "other".
         if ($c->startdate == 0) {
             $otherCourses = true;
@@ -57,13 +53,13 @@ function get_semester_by_user() {
     foreach ($semester as $y => $a) {
         if (isset($a[0])) {
             $terminfo = new stdClass();
-            $terminfo->id = $y . '-1';
+            $terminfo->id = $y . '-0';
             $terminfo->name = "SS" . $y;
             $output[] = $terminfo;
         }
         if (isset($a[1])) {
             $terminfo = new stdClass();
-            $terminfo->id = $y . '-2';
+            $terminfo->id = $y . '-1';
             $terminfo->name = "WS" . ($y) . "/" . ($y + 1);
             $output[] = $terminfo;
         }
@@ -99,7 +95,7 @@ function get_semester_by_user() {
  */
 function course_filter_courses_by_term($courses, string $term, int $limit = 0): array {
     $termsplit = explode("-", $term);
-    if (count($termsplit) != 2 || !($termsplit[1] == '0' || $termsplit[1] == '1')) {
+    if (count($termsplit) != 2) {
         $message = 'Term must be of the form YYYY-0 for first or YYYY-1 for the second semester of the year';
         throw new moodle_exception($message);
     }
@@ -120,7 +116,7 @@ function course_filter_courses_by_term($courses, string $term, int $limit = 0): 
 
     foreach ($courses as $course) {
         $numberofcoursesprocessed++;
-        $pref = get_user_preferences('block_myoverview_hidden_course_' . $course->id, 0);
+        $pref = false;//get_user_preferences('block_myoverview_hidden_course_' . $course->id, 0);
 
         // Added as of MDL-63457 toggle viewability for each user.
         if ((!empty($course->startdate) && $course->startdate >= $startdate && $course->startdate <= $enddate) && !$pref) {

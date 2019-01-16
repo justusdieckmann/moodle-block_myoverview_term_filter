@@ -112,6 +112,7 @@ function(
      */
     var getMyCourses = function(filters, limit) {
         if (filters.grouping === "term") {
+            console.log(filters);
             return Repository.getEnrolledCoursesByTerm({
                 offset: courseOffset,
                 limit: limit,

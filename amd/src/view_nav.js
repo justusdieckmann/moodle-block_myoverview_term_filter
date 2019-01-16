@@ -94,8 +94,9 @@ function(
 
                 var filter = option.attr('data-filter');
                 var pref = option.attr('data-pref');
-
-                root.find('#termdropdown').attr('hidden', pref !== 'term');
+                if(filter === "grouping") {
+                    root.find('#termdropdown').attr('hidden', pref !== 'term');
+                }
 
                 root.find(Selectors.courseView.region).attr('data-' + filter, option.attr('data-value'));
                 updatePreferences(filter, pref);
@@ -117,16 +118,8 @@ function(
                     return;
                 }
 
-
-
-                var filter = option.attr('data-display-option');
-                var pref = option.attr('data-pref');
-
-                console.log(filter, pref);
-
                 root.find(Selectors.courseView.region).attr('data-term', option.attr('data-value'));
-                //updatePreferences(filter, pref);
-                View.reset(root);
+                View.init(root);
                 data.originalEvent.preventDefault();
             }
         );

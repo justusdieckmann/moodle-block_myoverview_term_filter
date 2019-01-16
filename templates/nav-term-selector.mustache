@@ -2,14 +2,14 @@
     <div id="termdropdown" {{^term}}hidden{{/term}}>
     <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="{{#str}} aria:termdropdown, block_myoverview_term_filter {{/str}}">
         <span class="d-sm-inline-block" data-active-item-text>
-            {{selectedTerm}}
+            {{#terms}}{{#active}}{{name}}{{/active}}{{/terms}}
         </span>
     </button>
     <ul class="dropdown-menu multilevel" data-show-active-item data-active-item-text role="menu"  aria-labelledby="termdropdown">
 
         {{#terms}}
             <li>
-                <a class="dropdown-item {{#active}}active{{/active}}" href="#" data-term-option="term" data-value="{{id}}" data-pref="{{id}}" aria-label="{{name}}" aria-controls="courses-view-{{uniqid}}">
+                    <a class="dropdown-item {{#active}}active{{/active}}" href="#" data-term-option="term" data-value="{{id}}" data-pref="{{id}}" aria-label="{{name}}" aria-controls="courses-view-{{uniqid}}">
                     {{name}}
                 </a>
             </li>
