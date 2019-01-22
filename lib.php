@@ -27,34 +27,34 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Constants for the user preferences grouping options
  */
-define('BLOCK_myoverview_term_filter_GROUPING_ALL', 'all');
-define('BLOCK_myoverview_term_filter_GROUPING_INPROGRESS', 'inprogress');
-define('BLOCK_myoverview_term_filter_GROUPING_FUTURE', 'future');
-define('BLOCK_myoverview_term_filter_GROUPING_PAST', 'past');
-define('BLOCK_myoverview_term_filter_GROUPING_FAVOURITES', 'favourites');
-define('BLOCK_myoverview_term_filter_GROUPING_HIDDEN', 'hidden');
-define('BLOCK_myoverview_term_filter_GROUPING_TERM', 'term');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_ALL', 'all');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_INPROGRESS', 'inprogress');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_FUTURE', 'future');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_PAST', 'past');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_FAVOURITES', 'favourites');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_HIDDEN', 'hidden');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_TERM', 'term');
 
 /**
  * Constants for the user preferences sorting options
  * timeline
  */
-define('BLOCK_myoverview_term_filter_SORTING_TITLE', 'title');
-define('BLOCK_myoverview_term_filter_SORTING_LASTACCESSED', 'lastaccessed');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_SORTING_TITLE', 'title');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_SORTING_LASTACCESSED', 'lastaccessed');
 
 /**
  * Constants for the user preferences view options
  */
-define('BLOCK_myoverview_term_filter_VIEW_CARD', 'cards');
-define('BLOCK_myoverview_term_filter_VIEW_LIST', 'list');
-define('BLOCK_myoverview_term_filter_VIEW_SUMMARY', 'summary');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_VIEW_CARD', 'cards');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_VIEW_LIST', 'list');
+define('BLOCK_MYOVERVIEW_TERM_FILTER_VIEW_SUMMARY', 'summary');
 
 /**
  * Constants for the user paging preferences
  */
-define('BLOCK_myoverview_term_filter_PAGING_12', 12);
-define('BLOCK_myoverview_term_filter_PAGING_24', 24);
-define('BLOCK_myoverview_term_filter_PAGING_48', 48);
+define('BLOCK_MYOVERVIEW_TERM_FILTER_PAGING_12', 12);
+define('BLOCK_MYOVERVIEW_TERM_FILTER_PAGING_24', 24);
+define('BLOCK_MYOVERVIEW_TERM_FILTER_PAGING_48', 48);
 
 /**
  * Get the current user preferences that are available
@@ -64,35 +64,35 @@ define('BLOCK_myoverview_term_filter_PAGING_48', 48);
 function block_myoverview_term_filter_user_preferences() {
     $preferences['block_myoverview_term_filter_user_grouping_preference'] = array(
         'null' => NULL_NOT_ALLOWED,
-        'default' => BLOCK_myoverview_term_filter_GROUPING_ALL,
+        'default' => BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_ALL,
         'type' => PARAM_ALPHA,
         'choices' => array(
-            BLOCK_myoverview_term_filter_GROUPING_ALL,
-            BLOCK_myoverview_term_filter_GROUPING_INPROGRESS,
-            BLOCK_myoverview_term_filter_GROUPING_FUTURE,
-            BLOCK_myoverview_term_filter_GROUPING_PAST,
-            BLOCK_myoverview_term_filter_GROUPING_FAVOURITES,
-            BLOCK_myoverview_term_filter_GROUPING_HIDDEN,
-            BLOCK_myoverview_term_filter_GROUPING_TERM
+            BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_ALL,
+            BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_INPROGRESS,
+            BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_FUTURE,
+            BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_PAST,
+            BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_FAVOURITES,
+            BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_HIDDEN,
+            BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_TERM
         )
     );
     $preferences['block_myoverview_term_filter_user_sort_preference'] = array(
         'null' => NULL_NOT_ALLOWED,
-        'default' => BLOCK_myoverview_term_filter_SORTING_TITLE,
+        'default' => BLOCK_MYOVERVIEW_TERM_FILTER_SORTING_TITLE,
         'type' => PARAM_ALPHA,
         'choices' => array(
-            BLOCK_myoverview_term_filter_SORTING_TITLE,
-            BLOCK_myoverview_term_filter_SORTING_LASTACCESSED
+            BLOCK_MYOVERVIEW_TERM_FILTER_SORTING_TITLE,
+            BLOCK_MYOVERVIEW_TERM_FILTER_SORTING_LASTACCESSED
         )
     );
     $preferences['block_myoverview_term_filter_user_view_preference'] = array(
         'null' => NULL_NOT_ALLOWED,
-        'default' => BLOCK_myoverview_term_filter_VIEW_CARD,
+        'default' => BLOCK_MYOVERVIEW_TERM_FILTER_VIEW_CARD,
         'type' => PARAM_ALPHA,
         'choices' => array(
-            BLOCK_myoverview_term_filter_VIEW_CARD,
-            BLOCK_myoverview_term_filter_VIEW_LIST,
-            BLOCK_myoverview_term_filter_VIEW_SUMMARY
+            BLOCK_MYOVERVIEW_TERM_FILTER_VIEW_CARD,
+            BLOCK_MYOVERVIEW_TERM_FILTER_VIEW_LIST,
+            BLOCK_MYOVERVIEW_TERM_FILTER_VIEW_SUMMARY
         )
     );
 
@@ -106,12 +106,12 @@ function block_myoverview_term_filter_user_preferences() {
 
     $preferences['block_myoverview_term_filter_user_paging_preference'] = array(
         'null' => NULL_NOT_ALLOWED,
-        'default' => BLOCK_myoverview_term_filter_PAGING_12,
+        'default' => BLOCK_MYOVERVIEW_TERM_FILTER_PAGING_12,
         'type' => PARAM_INT,
         'choices' => array(
-            BLOCK_myoverview_term_filter_PAGING_12,
-            BLOCK_myoverview_term_filter_PAGING_24,
-            BLOCK_myoverview_term_filter_PAGING_48
+            BLOCK_MYOVERVIEW_TERM_FILTER_PAGING_12,
+            BLOCK_MYOVERVIEW_TERM_FILTER_PAGING_24,
+            BLOCK_MYOVERVIEW_TERM_FILTER_PAGING_48
         )
     );
 

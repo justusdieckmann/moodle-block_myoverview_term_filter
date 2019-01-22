@@ -44,15 +44,18 @@ class provider implements \core_privacy\local\metadata\provider, user_preference
      * @param  \core_privacy\local\metadata\collection $collection A collection of meta-data.
      * @return \core_privacy\local\metadata\collection Return the collection of meta-data.
      */
-    public static function get_metadata(collection $collection) : collection {
-        $collection->add_user_preference('block_myoverview_term_filter_user_sort_preference', 'privacy:metadata:overviewsortpreference');
-        $collection->add_user_preference('block_myoverview_term_filter_user_view_preference', 'privacy:metadata:overviewviewpreference');
+    public static function get_metadata(collection $collection): collection {
+        $collection->add_user_preference('block_myoverview_term_filter_user_sort_preference',
+                'privacy:metadata:overviewsortpreference');
+        $collection->add_user_preference('block_myoverview_term_filter_user_view_preference',
+                'privacy:metadata:overviewviewpreference');
         $collection->add_user_preference('block_myoverview_term_filter_user_grouping_preference',
-            'privacy:metadata:overviewgroupingpreference');
+                'privacy:metadata:overviewgroupingpreference');
         $collection->add_user_preference('block_myoverview_term_filter_user_paging_preference',
-            'privacy:metadata:overviewpagingpreference');
+                'privacy:metadata:overviewpagingpreference');
         return $collection;
     }
+
     /**
      * Export all user preferences for the myoverview_term_filter block
      *
@@ -61,48 +64,48 @@ class provider implements \core_privacy\local\metadata\provider, user_preference
     public static function export_user_preferences(int $userid) {
         $preference = get_user_preferences('block_myoverview_term_filter_user_sort_preference', null, $userid);
         if (isset($preference)) {
-            writer::export_user_preference('block_myoverview_term_filter',
-                'block_myoverview_term_filter_user_sort_preference', get_string($preference, 'block_myoverview_term_filter'),
-                get_string('privacy:metadata:overviewsortpreference', 'block_myoverview_term_filter'));
+            writer::export_user_preference('block_myoverview_term_filter', 'block_myoverview_term_filter_user_sort_preference',
+                    get_string($preference, 'block_myoverview_term_filter'),
+                    get_string('privacy:metadata:overviewsortpreference', 'block_myoverview_term_filter'));
         }
 
         $preference = get_user_preferences('block_myoverview_term_filter_user_view_preference', null, $userid);
         if (isset($preference)) {
             writer::export_user_preference('block_myoverview_term_filter',
-                'block_myoverview_term_filter_user_view_preference',
-                get_string($preference, 'block_myoverview_term_filter'),
-                get_string('privacy:metadata:overviewviewpreference', 'block_myoverview_term_filter'));
+                    'block_myoverview_term_filter_user_view_preference',
+                    get_string($preference, 'block_myoverview_term_filter'),
+                    get_string('privacy:metadata:overviewviewpreference', 'block_myoverview_term_filter'));
         }
 
         $preference = get_user_preferences('block_myoverview_term_filter_user_grouping_preference', null, $userid);
         if (isset($preference)) {
             writer::export_user_preference('block_myoverview_term_filter',
-                'block_myoverview_term_filter_user_grouping_preference',
-                get_string($preference, 'block_myoverview_term_filter'),
-                get_string('privacy:metadata:overviewgroupingpreference', 'block_myoverview_term_filter'));
+                    'block_myoverview_term_filter_user_grouping_preference',
+                    get_string($preference, 'block_myoverview_term_filter'),
+                    get_string('privacy:metadata:overviewgroupingpreference', 'block_myoverview_term_filter'));
         }
 
         $preferences = get_user_preferences(null, null, $userid);
         foreach ($preferences as $name => $value) {
             if ((substr($name, 0, 30) == 'block_myoverview_term_filter_hidden_course')) {
                 writer::export_user_preference(
-                    'block_myoverview_term_filter',
-                    $name,
-                    $value,
-                    get_string('privacy:request:preference:set', 'block_myoverview_term_filter', (object) [
-                        'name' => $name,
-                        'value' => $value,
-                    ])
+                        'block_myoverview_term_filter',
+                        $name,
+                        $value,
+                        get_string('privacy:request:preference:set', 'block_myoverview_term_filter', (object) [
+                                'name' => $name,
+                                'value' => $value,
+                        ])
                 );
             }
         }
 
         $preference = get_user_preferences('block_myoverview_term_filter_user_paging_preference', null, $userid);
         if (isset($preference)) {
-            \core_privacy\local\request\writer::export_user_preference('block_myoverview_term_filter',
-                'block_myoverview_term_filter_user_paging_preference',
-                $preference,
-                get_string('privacy:metadata:overviewpagingpreference', 'block_myoverview_term_filter'));
+            writer::export_user_preference('block_myoverview_term_filter',
+                    'block_myoverview_term_filter_user_paging_preference',
+                    $preference,
+                    get_string('privacy:metadata:overviewpagingpreference', 'block_myoverview_term_filter'));
         }
     }
 }

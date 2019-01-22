@@ -1,4 +1,20 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Myoverview term filter external file
@@ -7,6 +23,7 @@
  * @copyright  2019 Justus Dieckmann <justusdieckmann@wwu.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require_once($CFG->libdir . "/externallib.php");
 
 class local_block_myoverview_term_filter_external extends external_api {
@@ -109,7 +126,8 @@ class local_block_myoverview_term_filter_external extends external_api {
             if (in_array($course->id, $favouritecourseids)) {
                 $isfavourite = true;
             }
-            $exporter = new core_course\external\course_summary_exporter($course, ['context' => $context, 'isfavourite' => $isfavourite]);
+            $exporter = new core_course\external\course_summary_exporter($course,
+                    ['context' => $context, 'isfavourite' => $isfavourite]);
             return $exporter->export($renderer);
         }, $filteredcourses);
 
@@ -127,7 +145,8 @@ class local_block_myoverview_term_filter_external extends external_api {
     public static function get_enrolled_courses_by_term_returns() {
         return new external_single_structure(
                 array(
-                        'courses' => new external_multiple_structure(core_course\external\course_summary_exporter::get_read_structure(), 'Course'),
+                        'courses' => new external_multiple_structure(
+                                core_course\external\course_summary_exporter::get_read_structure(), 'Course'),
                         'nextoffset' => new external_value(PARAM_INT, 'Offset for the next request')
                 )
         );
