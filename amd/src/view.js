@@ -118,6 +118,21 @@ define(
                 classification: filters.grouping,
                 sort: filters.sort
             });
+            /*if (filters.grouping === "term") {
+                return Repository.getEnrolledCoursesByTerm({
+                    offset: courseOffset,
+                    limit: limit,
+                    term: filters.term,
+                    sort: filters.sort
+                });
+            } else {
+                return Repository.getEnrolledCoursesByTimeline({
+                    offset: courseOffset,
+                    limit: limit,
+                    classification: filters.grouping,
+                    sort: filters.sort
+                });
+            }*/
         };
 
         /**
@@ -558,7 +573,7 @@ define(
 
                 var request = {
                     preferences: [{
-                        type: 'block_myoverview_term_filter_hidden_course_' + id,
+                        type: 'block_myoverview_hidden_course_' + id,
                         value: true
                     }]
                 };
@@ -574,7 +589,7 @@ define(
 
                 var request = {
                     preferences: [{
-                        type: 'block_myoverview_term_filter_hidden_course_' + id,
+                        type: 'block_myoverview_hidden_course_' + id,
                         value: null
                     }]
                 };

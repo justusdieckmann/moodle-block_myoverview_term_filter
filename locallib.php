@@ -252,8 +252,8 @@ function course_filter_courses_by_timeline_classification_and_term(
         $pref = get_user_preferences('block_myoverview_hidden_course_' . $course->id, 0);
 
         // Added as of MDL-63457 toggle viewability for each user.
-        if (($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
-                (($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) && !$pref) &&
+        if ((($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
+                (($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) && !$pref)) &&
                 (!empty($course->startdate) && $course->startdate >= $startdate && $course->startdate <= $enddate)) {
             $filteredcourses[] = $course;
             $filtermatches++;
