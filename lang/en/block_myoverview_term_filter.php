@@ -65,6 +65,7 @@ $string['privacy:metadata:overviewpagingpreference'] = 'The Course overview bloc
 $string['removefromfavourites'] = 'Unstar this course';
 $string['summary'] = 'Summary';
 $string['title'] = 'Course name';
+$string['other'] = 'Other';
 $string['aria:hidecourse'] = 'Hide {$a} from view';
 $string['aria:showcourse'] = 'Show {$a} in view';
 $string['aria:hiddencourses'] = 'Show hidden courses';
@@ -72,7 +73,6 @@ $string['aria:semestercourses'] = 'Show semester courses';
 $string['hidden'] = 'Hidden courses';
 $string['hidecourse'] = 'Hide from view';
 $string['hiddencourses'] = 'Hidden';
-$string['semestercourses'] = 'Semesterkurse';
 $string['show'] = 'Show this course';
 $string['privacy:request:preference:set'] = 'The value of the setting \'{$a->name}\' was \'{$a->value}\'';
 

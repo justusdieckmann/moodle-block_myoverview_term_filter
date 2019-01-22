@@ -35,7 +35,6 @@ function get_semester_by_user() {
         if ($c->startdate == 0) {
             $othercourses = true;
         } else {
-            // ..."Semester" mode.
             // Prepare date information.
             $coursestartyday = usergetdate($c->startdate)['yday'];
             $coursestartyear = usergetdate($c->startdate)['year'];
@@ -60,77 +59,51 @@ function get_semester_by_user() {
         }
     }
 
-    $output = [];
+    $terms = [];
+
+    $terminfo = new stdClass();
+    $terminfo->id = 'all';
+    $terminfo->name = get_string('all', 'block_course_overview_campus');
+    $terms[] = $terminfo;
 
     foreach ($semester as $y => $a) {
         if (isset($a[0])) {
             $terminfo = new stdClass();
             $terminfo->id = $y . '-0';
             $terminfo->name = "SS" . $y;
-            $output[] = $terminfo;
+            $terms[] = $terminfo;
         }
         if (isset($a[1])) {
             $terminfo = new stdClass();
             $terminfo->id = $y . '-1';
             $terminfo->name = "WS" . ($y) . "/" . ($y + 1);
-            $output[] = $terminfo;
+            $terms[] = $terminfo;
         }
     }
 
     if ($othercourses) {
-        $terminfo = array();
+        $terminfo = new stdClass();
         $terminfo->id = 'other';
         $terminfo->name = get_string('other', 'block_course_overview_campus');
-        $output[] = $terminfo;
+        $terms[] = $terminfo;
     }
 
-    $output[0]->active = true;
-    // TODO change output.
+    $terms[0]->active = true;
 
-    return $output;
+    return $terms;
 }
 
-function course_filter_courses_by_term($courses, string $term, int $limit = 0): array {
-    $termsplit = explode("-", $term);
-    if (count($termsplit) != 2) {
-        $message = 'Term must be of the form YYYY-0 for first or YYYY-1 for the second semester of the year';
-        throw new moodle_exception($message);
-    }
+function getDefaults($terms) {
+    $term1start = "04-01";
+    $term2start = "10-01";
 
-    $year = intval($termsplit[0], 10);
-
-    if ($termsplit[1] == '0') {
-        $startdate = mktime(0, 0, 0, 4, 1, $year);
-        $enddate = mktime(0, 0, 0, 10, 1, $year);
-    } else {
-        $startdate = mktime(0, 0, 0, 10, 1, $year);
-        $enddate = mktime(0, 0, 0, 4, 1, $year + 1);
-    }
-
-    $filteredcourses = [];
-    $numberofcoursesprocessed = 0;
-    $filtermatches = 0;
-
-    foreach ($courses as $course) {
-        $numberofcoursesprocessed++;
-        $pref = false;
-
-        // Added as of MDL-63457 toggle viewability for each user.
-        if ((!empty($course->startdate) && $course->startdate >= $startdate && $course->startdate <= $enddate) && !$pref) {
-            $filteredcourses[] = $course;
-            $filtermatches++;
-        }
-
-        if ($limit && $filtermatches >= $limit) {
-            // We've found the number of requested courses. No need to continue searching.
-            break;
-        }
-    }
-
-    // Return the number of filtered courses as well as the number of courses that were searched
-    // in order to find the matching courses. This allows the calling code to do some kind of
-    // pagination.
-    return [$filteredcourses, $numberofcoursesprocessed];
+    $time = usergetdate(new DateTime("now", core_date::get_user_timezone_object()));
+    $yday = usergetdate($time)['yday'];
+    $year = usergetdate($time)['year'];
+    $term1startyday = usergetdate(make_timestamp($year, explode('-', $term1start)[0],
+            explode('-', $term1start)[1]))['yday'];
+    $term2startyday = usergetdate(make_timestamp($year, explode('-', $term2start)[0],
+            explode('-', $term2start)[1]))['yday'];
 }
 
 /**
@@ -155,20 +128,28 @@ function course_filter_courses_by_favourites_and_term(
         int $limit = 0
 ): array {
 
-    $termsplit = explode("-", $term);
-    if (count($termsplit) != 2) {
-        $message = 'Term must be of the form YYYY-0 for first or YYYY-1 for the second semester of the year';
-        throw new moodle_exception($message);
-    }
+    $all = false;
+    $other = false;
 
-    $year = intval($termsplit[0], 10);
+    if ($term == "all") {
+        $all = true;
+    } else if ($term == "other") {
+        $other = true;
+    } else if (preg_match('/\\d{4}-(0|1)$/', $term)) {
 
-    if ($termsplit[1] == '0') {
-        $startdate = mktime(0, 0, 0, 4, 1, $year);
-        $enddate = mktime(0, 0, 0, 10, 1, $year);
+        $termsplit = explode("-", $term);
+        $year = intval($termsplit[0], 10);
+
+        if ($termsplit[1] == '0') {
+            $startdate = mktime(0, 0, 0, 4, 1, $year);
+            $enddate = mktime(0, 0, 0, 10, 1, $year);
+        } else {
+            $startdate = mktime(0, 0, 0, 10, 1, $year);
+            $enddate = mktime(0, 0, 0, 4, 1, $year + 1);
+        }
     } else {
-        $startdate = mktime(0, 0, 0, 10, 1, $year);
-        $enddate = mktime(0, 0, 0, 4, 1, $year + 1);
+        $message = 'Term must be "all", "other" or  of the form YYYY-0 for first or YYYY-1 for the second semester of the year';
+        throw new moodle_exception($message);
     }
 
     $filteredcourses = [];
@@ -178,10 +159,12 @@ function course_filter_courses_by_favourites_and_term(
     foreach ($courses as $course) {
         $numberofcoursesprocessed++;
 
-        if (in_array($course->id, $favouritecourseids) &&
-                (!empty($course->startdate) && $course->startdate >= $startdate && $course->startdate <= $enddate)) {
-            $filteredcourses[] = $course;
-            $filtermatches++;
+        if (in_array($course->id, $favouritecourseids)) {
+            if ($all || ($other && (empty($course->startdate) || $course->startdate <= 5000)) ||
+                    (!$other && !empty($course->startdate) && $course->startdate >= $startdate && $course->startdate <= $enddate)) {
+                $filteredcourses[] = $course;
+                $filtermatches++;
+            }
         }
 
         if ($limit && $filtermatches >= $limit) {
@@ -219,20 +202,28 @@ function course_filter_courses_by_timeline_classification_and_term(
         int $limit = 0
 ): array {
 
-    $termsplit = explode("-", $term);
-    if (count($termsplit) != 2) {
-        $message = 'Term must be of the form YYYY-0 for first or YYYY-1 for the second semester of the year';
-        throw new moodle_exception($message);
-    }
+    $all = false;
+    $other = false;
 
-    $year = intval($termsplit[0], 10);
+    if ($term == "all") {
+        $all = true;
+    } else if ($term == "other") {
+        $other = true;
+    } else if (preg_match('/\\d{4}-(0|1)$/', $term)) {
 
-    if ($termsplit[1] == '0') {
-        $startdate = mktime(0, 0, 0, 4, 1, $year);
-        $enddate = mktime(0, 0, 0, 10, 1, $year);
+        $termsplit = explode("-", $term);
+        $year = intval($termsplit[0], 10);
+
+        if ($termsplit[1] == '0') {
+            $startdate = mktime(0, 0, 0, 4, 1, $year);
+            $enddate = mktime(0, 0, 0, 10, 1, $year);
+        } else {
+            $startdate = mktime(0, 0, 0, 10, 1, $year);
+            $enddate = mktime(0, 0, 0, 4, 1, $year + 1);
+        }
     } else {
-        $startdate = mktime(0, 0, 0, 10, 1, $year);
-        $enddate = mktime(0, 0, 0, 4, 1, $year + 1);
+        $message = 'Term must be "all", "other" or  of the form YYYY-0 for first or YYYY-1 for the second semester of the year';
+        throw new moodle_exception($message);
     }
 
     if (!in_array($classification,
@@ -251,12 +242,14 @@ function course_filter_courses_by_timeline_classification_and_term(
         $numberofcoursesprocessed++;
         $pref = get_user_preferences('block_myoverview_hidden_course_' . $course->id, 0);
 
-        // Added as of MDL-63457 toggle viewability for each user.
-        if ((($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
-                (($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) && !$pref)) &&
-                (!empty($course->startdate) && $course->startdate >= $startdate && $course->startdate <= $enddate)) {
-            $filteredcourses[] = $course;
-            $filtermatches++;
+        // TODO Remove 5000!
+        if (($classification == COURSE_TIMELINE_HIDDEN && $pref) ||
+                (($classification == COURSE_TIMELINE_ALL || $classification == course_classify_for_timeline($course)) && !$pref)) {
+            if ($all || ($other && (empty($course->startdate) || $course->startdate <= 5000)) || (!$other &&
+                            !empty($course->startdate) && $course->startdate >= $startdate && $course->startdate <= $enddate)) {
+                $filteredcourses[] = $course;
+                $filtermatches++;
+            }
         }
 
         if ($limit && $filtermatches >= $limit) {
