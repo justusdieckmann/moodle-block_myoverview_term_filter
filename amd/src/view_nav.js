@@ -22,142 +22,136 @@
  */
 
 define(
-[
-    'jquery',
-    'core/custom_interaction_events',
-    'block_myoverview_term_filter/repository',
-    'block_myoverview_term_filter/view',
-    'block_myoverview_term_filter/selectors'
-],
-function(
-    $,
-    CustomEvents,
-    Repository,
-    View,
-    Selectors
-) {
+    [
+        'jquery',
+        'core/custom_interaction_events',
+        'block_myoverview_term_filter/repository',
+        'block_myoverview_term_filter/view',
+        'block_myoverview_term_filter/selectors'
+    ],
+    function (
+        $,
+        CustomEvents,
+        Repository,
+        View,
+        Selectors
+    ) {
 
-    var SELECTORS = {
-        FILTERS: '[data-region="filter"]',
-        FILTER_OPTION: '[data-filter]',
-        DISPLAY_OPTION: '[data-display-option]',
-        TERM_OPTION: '[data-term-option]'
-    };
+        var SELECTORS = {
+            FILTERS: '[data-region="filter"]',
+            FILTER_OPTION: '[data-filter]',
+            DISPLAY_OPTION: '[data-display-option]',
+            TERM_OPTION: '[data-term-option]'
+        };
 
-    /**
-     * Update the user preference for the block.
-     *
-     * @param {String} filter The type of filter: display/sort/grouping.
-     * @param {String} value The current preferred value.
-     */
-    var updatePreferences = function(filter, value) {
-        var type = null;
-        if (filter == 'display') {
-            type = 'block_myoverview_term_filter_user_view_preference';
-        } else if (filter == 'sort') {
-            type = 'block_myoverview_term_filter_user_sort_preference';
-        } else {
-            type = 'block_myoverview_term_filter_user_grouping_preference';
-        }
+        /**
+         * Update the user preference for the block.
+         *
+         * @param {String} filter The type of filter: display/sort/grouping.
+         * @param {String} value The current preferred value.
+         */
+        var updatePreferences = function (filter, value) {
+            var type = null;
+            if (filter == 'display') {
+                type = 'block_myoverview_term_filter_user_view_preference';
+            } else if (filter == 'sort') {
+                type = 'block_myoverview_term_filter_user_sort_preference';
+            } else {
+                type = 'block_myoverview_term_filter_user_grouping_preference';
+            }
 
-        Repository.updateUserPreferences({
-            preferences: [
-                {
+            Repository.updateUserPreferences({
+                preferences: [{
                     type: type,
                     value: value
+                }]
+            });
+        };
+
+        /**
+         * Event listener for the Display filter (cards, list).
+         *
+         * @param {object} root The root element for the overview block
+         */
+        var registerSelector = function (root) {
+
+            var Selector = root.find(SELECTORS.FILTERS);
+
+            CustomEvents.define(Selector, [CustomEvents.events.activate]);
+            Selector.on(
+                CustomEvents.events.activate,
+                SELECTORS.FILTER_OPTION,
+                function (e, data) {
+                    var option = $(e.target);
+
+                    if (option.hasClass('active')) {
+                        // If it's already active then we don't need to do anything.
+                        return;
+                    }
+
+                    var filter = option.attr('data-filter');
+                    var pref = option.attr('data-pref');
+
+                    root.find(Selectors.courseView.region).attr('data-' + filter, option.attr('data-value'));
+                    updatePreferences(filter, pref);
+                    // Reset the views.
+                    View.init(root);
+
+                    data.originalEvent.preventDefault();
                 }
-            ]
-        });
-    };
+            );
 
+            CustomEvents.define(Selector, [CustomEvents.events.activate]);
+            Selector.on(
+                CustomEvents.events.activate,
+                SELECTORS.TERM_OPTION,
+                function (e, data) {
+                    var option = $(e.target);
 
-    /**
-     * Event listener for the Display filter (cards, list).
-     *
-     * @param {object} root The root element for the overview block
-     */
-    var registerSelector = function(root) {
+                    if (option.hasClass('active')) {
+                        return;
+                    }
 
-        var Selector = root.find(SELECTORS.FILTERS);
-
-        CustomEvents.define(Selector, [CustomEvents.events.activate]);
-        Selector.on(
-            CustomEvents.events.activate,
-            SELECTORS.FILTER_OPTION,
-            function(e, data) {
-                var option = $(e.target);
-
-                if (option.hasClass('active')) {
-                    // If it's already active then we don't need to do anything.
-                    return;
+                    root.find(Selectors.courseView.region).attr('data-term', option.attr('data-value'));
+                    View.init(root);
+                    data.originalEvent.preventDefault();
                 }
+            );
 
-                var filter = option.attr('data-filter');
-                var pref = option.attr('data-pref');
-                if(filter === "grouping") {
-                    root.find('#termdropdown').attr('hidden', pref !== 'term');
+            CustomEvents.define(Selector, [CustomEvents.events.activate]);
+            Selector.on(
+                CustomEvents.events.activate,
+                SELECTORS.DISPLAY_OPTION,
+                function (e, data) {
+                    var option = $(e.target);
+
+                    if (option.hasClass('active')) {
+                        return;
+                    }
+
+                    var filter = option.attr('data-display-option');
+                    var pref = option.attr('data-pref');
+
+                    root.find(Selectors.courseView.region).attr('data-display', option.attr('data-value'));
+                    updatePreferences(filter, pref);
+                    View.reset(root);
+                    data.originalEvent.preventDefault();
                 }
+            );
+        };
 
-                root.find(Selectors.courseView.region).attr('data-' + filter, option.attr('data-value'));
-                updatePreferences(filter, pref);
-                // Reset the views.
-                View.init(root);
+        /**
+         * Initialise the timeline view navigation by adding event listeners to
+         * the navigation elements.
+         *
+         * @param {object} root The root element for the myoverview_term_filter block
+         */
+        var init = function (root) {
+            root = $(root);
+            registerSelector(root);
+        };
 
-                data.originalEvent.preventDefault();
-            }
-        );
-
-        CustomEvents.define(Selector, [CustomEvents.events.activate]);
-        Selector.on(
-            CustomEvents.events.activate,
-            SELECTORS.TERM_OPTION,
-            function(e, data) {
-                var option = $(e.target);
-
-                if (option.hasClass('active')) {
-                    return;
-                }
-
-                root.find(Selectors.courseView.region).attr('data-term', option.attr('data-value'));
-                View.init(root);
-                data.originalEvent.preventDefault();
-            }
-        );
-
-        CustomEvents.define(Selector, [CustomEvents.events.activate]);
-        Selector.on(
-            CustomEvents.events.activate,
-            SELECTORS.DISPLAY_OPTION,
-            function(e, data) {
-                var option = $(e.target);
-
-                if (option.hasClass('active')) {
-                    return;
-                }
-
-                var filter = option.attr('data-display-option');
-                var pref = option.attr('data-pref');
-
-                root.find(Selectors.courseView.region).attr('data-display', option.attr('data-value'));
-                updatePreferences(filter, pref);
-                View.reset(root);
-                data.originalEvent.preventDefault();
-            }
-        );
-    };
-
-    /**
-     * Initialise the timeline view navigation by adding event listeners to
-     * the navigation elements.
-     *
-     * @param {object} root The root element for the myoverview_term_filter block
-     */
-    var init = function(root) {
-        root = $(root);
-        registerSelector(root);
-    };
-
-    return {
-        init: init
-    };
-});
+        return {
+            init: init
+        };
+    });

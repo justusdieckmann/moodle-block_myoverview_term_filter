@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Myoverview term filter external file
  *
@@ -23,6 +21,8 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2019 Justus Dieckmann <justusdieckmann@wwu.de>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . "/externallib.php");
 
@@ -37,6 +37,7 @@ class local_block_myoverview_term_filter_external extends external_api {
         return new external_function_parameters(
                 array(
                         'term' => new external_value(PARAM_TEXT, 'term to filter for', VALUE_DEFAULT, null),
+                        'classification' => new external_value(PARAM_ALPHA, 'future, inprogress, or past'),
                         'limit' => new external_value(PARAM_INT, 'Result set limit', VALUE_DEFAULT, 0),
                         'offset' => new external_value(PARAM_INT, 'Result set offset', VALUE_DEFAULT, 0),
                         'sort' => new external_value(PARAM_TEXT, 'Sort string', VALUE_DEFAULT, null)
@@ -67,6 +68,7 @@ class local_block_myoverview_term_filter_external extends external_api {
      */
     public static function get_enrolled_courses_by_term(
             string $term,
+            string $classification,
             int $limit = 0,
             int $offset = 0,
             string $sort = null
@@ -78,6 +80,7 @@ class local_block_myoverview_term_filter_external extends external_api {
         $params = self::validate_parameters(self::get_enrolled_courses_by_term_parameters(),
                 array(
                         'term' => $term,
+                        'classification' => $classification,
                         'limit' => $limit,
                         'offset' => $offset,
                         'sort' => $sort,
@@ -85,9 +88,27 @@ class local_block_myoverview_term_filter_external extends external_api {
         );
 
         $term = $params['term'];
+        $classification = $params['classification'];
         $limit = $params['limit'];
         $offset = $params['offset'];
         $sort = $params['sort'];
+
+        switch ($classification) {
+            case COURSE_TIMELINE_ALL:
+                break;
+            case COURSE_TIMELINE_PAST:
+                break;
+            case COURSE_TIMELINE_INPROGRESS:
+                break;
+            case COURSE_TIMELINE_FUTURE:
+                break;
+            case COURSE_FAVOURITES:
+                break;
+            case COURSE_TIMELINE_HIDDEN:
+                break;
+            default:
+                throw new invalid_parameter_exception('Invalid classification');
+        }
 
         self::validate_context(context_user::instance($USER->id));
 
@@ -97,9 +118,13 @@ class local_block_myoverview_term_filter_external extends external_api {
         $courses = [];
 
         // If the timeline requires the hidden courses then restrict the result to only $hiddencourses else exclude.
-
-        $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields,
-                COURSE_DB_QUERY_LIMIT, [], $hiddencourses);
+        if ($classification == COURSE_TIMELINE_HIDDEN) {
+            $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields,
+                    COURSE_DB_QUERY_LIMIT, $hiddencourses);
+        } else {
+            $courses = course_get_enrolled_courses_for_logged_in_user(0, $offset, $sort, $fields,
+                    COURSE_DB_QUERY_LIMIT, [], $hiddencourses);
+        }
 
         $favouritecourseids = [];
         $ufservice = \core_favourites\service_factory::get_service_for_user_context(\context_user::instance($USER->id));
@@ -112,11 +137,21 @@ class local_block_myoverview_term_filter_external extends external_api {
                     }, $favourites);
         }
 
-        list($filteredcourses, $processedcount) = course_filter_courses_by_term(
-                $courses,
-                $term,
-                $limit
-        );
+        if ($classification == COURSE_FAVOURITES) {
+            list($filteredcourses, $processedcount) = course_filter_courses_by_favourites_and_term(
+                    $courses,
+                    $favouritecourseids,
+                    $term,
+                    $limit
+            );
+        } else {
+            list($filteredcourses, $processedcount) = course_filter_courses_by_timeline_classification_and_term(
+                    $courses,
+                    $classification,
+                    $term,
+                    $limit
+            );
+        }
 
         $renderer = $PAGE->get_renderer('core');
         $formattedcourses = array_map(function($course) use ($renderer, $favouritecourseids) {

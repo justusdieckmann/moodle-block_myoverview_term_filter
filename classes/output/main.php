@@ -80,10 +80,10 @@ class main implements renderable, templatable {
      * @param string $view Display user preference
      */
     public function __construct($grouping, $sort, $view, $paging, $terms) {
-        $this->grouping = $grouping ? $grouping : BLOCK_myoverview_term_filter_GROUPING_ALL;
-        $this->sort = $sort ? $sort : BLOCK_myoverview_term_filter_SORTING_TITLE;
-        $this->view = $view ? $view : BLOCK_myoverview_term_filter_VIEW_CARD;
-        $this->paging = $paging ? $paging : BLOCK_myoverview_term_filter_PAGING_12;
+        $this->grouping = $grouping ? $grouping : BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_ALL;
+        $this->sort = $sort ? $sort : BLOCK_MYOVERVIEW_TERM_FILTER_SORTING_TITLE;
+        $this->view = $view ? $view : BLOCK_MYOVERVIEW_TERM_FILTER_VIEW_CARD;
+        $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_TERM_FILTER_PAGING_12;
         $this->terms = $terms;
     }
 
@@ -114,7 +114,7 @@ class main implements renderable, templatable {
         $defaultvariables = [
             'nocoursesimg' => $nocoursesurl,
             'grouping' => $this->grouping,
-            'sort' => $this->sort == BLOCK_myoverview_term_filter_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc',
+            'sort' => $this->sort == BLOCK_MYOVERVIEW_TERM_FILTER_SORTING_TITLE ? 'fullname' : 'ul.timeaccess desc',
             'view' => $this->view,
             'paging' => $this->paging,
             'terms' => $this->terms,

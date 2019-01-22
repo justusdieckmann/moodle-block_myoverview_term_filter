@@ -23,31 +23,6 @@
 define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
 
     /**
-     * Retrieve a list of enrolled courses.
-     *
-     * Valid args are:
-     * string classification    future, inprogress, past
-     * int limit                number of records to retreive
-     * int Offset               offset for pagination
-     * int sort                 sort by lastaccess or name
-     *
-     * @method getEnrolledCoursesByTimeline
-     * @param {object} args The request arguments
-     * @return {promise} Resolved with an array of courses
-     */
-    var getEnrolledCoursesByTimeline = function(args) {
-
-        var request = {
-            methodname: 'core_course_get_enrolled_courses_by_timeline_classification',
-            args: args
-        };
-
-        var promise = Ajax.call([request])[0];
-
-        return promise;
-    };
-
-    /**
      * Retrieve a lost of enrolled courses in a specific term.
      *
      * Valid args are:
@@ -119,7 +94,6 @@ define(['core/ajax', 'core/notification'], function(Ajax, Notification) {
     };
 
     return {
-        getEnrolledCoursesByTimeline: getEnrolledCoursesByTimeline,
         getEnrolledCoursesByTerm: getEnrolledCoursesByTerm,
         setFavouriteCourses: setFavouriteCourses,
         updateUserPreferences: updateUserPreferences
