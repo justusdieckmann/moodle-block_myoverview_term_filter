@@ -28,7 +28,7 @@ matrix:
 env:
   global:
     - IGNORE_PATHS=amd/build BEHAT=yes
-    - IGNORE_NAMES=nav-display-selector.mustache,nav-grouping-selector.mustache,nav-sort-selector.mustache,course-action-menu.mustache
+    - IGNORE_NAMES=nav-display-selector.mustache,nav-grouping-selector.mustache,nav-term-selector.mustache,nav-sort-selector.mustache,course-action-menu.mustache
   matrix:
     - DB=pgsql MOODLE_BRANCH=MOODLE_36_STABLE
     - DB=pgsql MOODLE_BRANCH=master
