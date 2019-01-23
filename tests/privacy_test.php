@@ -82,23 +82,4 @@ class block_myoverview_term_filter_privacy_testcase extends \core_privacy\tests\
             array('block_myoverview_term_filter_user_paging_preference', 12, 12)
         );
     }
-
-    public function test_export_user_preferences_with_hidden_courses() {
-        $this->resetAfterTest();
-        $user = $this->getDataGenerator()->create_user();
-        $name = "block_myoverview_term_filter_hidden_course_1";
-
-        set_user_preference($name, 1, $user);
-        provider::export_user_preferences($user->id);
-        $writer = writer::with_context(\context_system::instance());
-        $blockpreferences = $writer->get_user_preferences('block_myoverview_term_filter');
-
-        $this->assertEquals(
-            get_string("privacy:request:preference:set", 'block_myoverview_term_filter', (object) [
-                'name' => $name,
-                'value' => 1,
-            ]),
-            $blockpreferences->{$name}->description
-        );
-    }
 }
