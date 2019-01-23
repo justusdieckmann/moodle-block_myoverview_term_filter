@@ -67,9 +67,14 @@ class main implements renderable, templatable {
     private $paging;
 
     /**
-     * @var array
+     * @var array Array of all the Terms in which the user has courses
      */
     private $terms;
+
+    /**
+     * @var array Array of all defaults
+     */
+    private $defaults;
 
     /**
      * main constructor.
@@ -78,13 +83,17 @@ class main implements renderable, templatable {
      * @param string $grouping Grouping user preference
      * @param string $sort Sort user preference
      * @param string $view Display user preference
+     * @param string $paging Paging user preference
+     * @param array $terms Selectable Terms
+     * @param array $defaults Default term for each grouping
      */
-    public function __construct($grouping, $sort, $view, $paging, $terms) {
+    public function __construct($grouping, $sort, $view, $paging, $terms, $defaults) {
         $this->grouping = $grouping ? $grouping : BLOCK_MYOVERVIEW_TERM_FILTER_GROUPING_ALL;
         $this->sort = $sort ? $sort : BLOCK_MYOVERVIEW_TERM_FILTER_SORTING_TITLE;
         $this->view = $view ? $view : BLOCK_MYOVERVIEW_TERM_FILTER_VIEW_CARD;
         $this->paging = $paging ? $paging : BLOCK_MYOVERVIEW_TERM_FILTER_PAGING_12;
         $this->terms = $terms;
+        $this->defaults = $defaults;
     }
 
     /**
@@ -118,11 +127,10 @@ class main implements renderable, templatable {
             'view' => $this->view,
             'paging' => $this->paging,
             'terms' => $this->terms,
-            'selectedTerm' => 'SS2017'
         ];
 
         $preferences = $this->get_preferences_as_booleans();
-        return array_merge($defaultvariables, $preferences);
+        return array_merge($defaultvariables, $preferences, $this->defaults);
 
     }
 }

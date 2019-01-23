@@ -52,9 +52,9 @@ define(
          */
         var updatePreferences = function (filter, value) {
             var type = null;
-            if (filter == 'display') {
+            if (filter === 'display') {
                 type = 'block_myoverview_term_filter_user_view_preference';
-            } else if (filter == 'sort') {
+            } else if (filter === 'sort') {
                 type = 'block_myoverview_term_filter_user_sort_preference';
             } else {
                 type = 'block_myoverview_term_filter_user_grouping_preference';
@@ -66,6 +66,26 @@ define(
                     value: value
                 }]
             });
+        };
+
+        /**
+         * Selects the default term for the selected grouping-method
+         *
+         * @param {object} root The root element for the overview block
+         */
+        var selectTermForGrouping = function (root) {
+            var datahead = root.find(Selectors.courseView.region);
+            var termelement = root.find('#termdropdown');
+
+            var oldTerm = datahead.attr('data-term');
+            termelement.find('[data-value="' + oldTerm + '"]').removeClass("active");
+
+            var grouping = datahead.attr('data-grouping');
+            var term = termelement.attr('data-default-' + grouping);
+            datahead.attr('data-term', term);
+            termelement.find('[data-value="' + term + '"]').addClass("active");
+            termelement.find('#selectedterm').text(termelement.find('[data-value="' + term + '"]').text());
+
         };
 
         /**
@@ -93,6 +113,9 @@ define(
                     var pref = option.attr('data-pref');
 
                     root.find(Selectors.courseView.region).attr('data-' + filter, option.attr('data-value'));
+
+                    selectTermForGrouping(root);
+
                     updatePreferences(filter, pref);
                     // Reset the views.
                     View.init(root);
@@ -149,6 +172,7 @@ define(
         var init = function (root) {
             root = $(root);
             registerSelector(root);
+            selectTermForGrouping(root);
         };
 
         return {

@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use block_myoverview_term_filter\util\filter_helper;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . "/externallib.php");
@@ -59,31 +61,21 @@ class local_block_myoverview_term_filter_external extends external_api {
      * and c4 and c5 will be return.
      *
      * @param  string $term
+     * @param string $classification
      * @param  int $limit Result set limit
      * @param  int $offset Offset the full course set before timeline classification is applied
      * @param  string $sort SQL sort string for results
      * @return array list of courses and warnings
      * @throws  invalid_parameter_exception
      */
-    public static function get_enrolled_courses_by_term(
-            string $term,
-            string $classification,
-            int $limit = 0,
-            int $offset = 0,
-            string $sort = null
-    ) {
+    public static function get_enrolled_courses_by_term(string $term, string $classification, int $limit = 0, int $offset = 0,
+            string $sort = null) {
         global $CFG, $PAGE, $USER;
         require_once($CFG->dirroot . '/course/lib.php');
-        require_once($CFG->dirroot . '/blocks/myoverview_term_filter/locallib.php');
 
         $params = self::validate_parameters(self::get_enrolled_courses_by_term_parameters(),
-                array(
-                        'term' => $term,
-                        'classification' => $classification,
-                        'limit' => $limit,
-                        'offset' => $offset,
-                        'sort' => $sort,
-                )
+                array('term' => $term, 'classification' => $classification, 'limit' => $limit, 'offset' => $offset,
+                        'sort' => $sort)
         );
 
         $term = $params['term'];
@@ -114,7 +106,6 @@ class local_block_myoverview_term_filter_external extends external_api {
         $requiredproperties = core_course\external\course_summary_exporter::define_properties();
         $fields = join(',', array_keys($requiredproperties));
         $hiddencourses = get_hidden_courses_on_timeline();
-        $courses = [];
 
         // If the timeline requires the hidden courses then restrict the result to only $hiddencourses else exclude.
         if ($classification == COURSE_TIMELINE_HIDDEN) {
@@ -137,14 +128,14 @@ class local_block_myoverview_term_filter_external extends external_api {
         }
 
         if ($classification == COURSE_FAVOURITES) {
-            list($filteredcourses, $processedcount) = course_filter_courses_by_favourites_and_term(
+            list($filteredcourses, $processedcount) = filter_helper::course_filter_courses_by_favourites_and_term(
                     $courses,
                     $favouritecourseids,
                     $term,
                     $limit
             );
         } else {
-            list($filteredcourses, $processedcount) = course_filter_courses_by_timeline_classification_and_term(
+            list($filteredcourses, $processedcount) = filter_helper::course_filter_courses_by_timeline_classification_and_term(
                     $courses,
                     $classification,
                     $term,
